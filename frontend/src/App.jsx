@@ -107,7 +107,18 @@ function App() {
                 className={`message-row message-row-${message.role}`}
               >
                 <span className="message-label">
-                  {message.role === "user" ? "You" : "Bot"}
+                  {message.role === "user" ? (
+                    "You"
+                  ) : (
+                    <>
+                      <img
+                        className="bot-avatar"
+                        src="/images/logo.PNG"
+                        alt="SG-BOT"
+                      />
+                      <span>SG-BOT</span>
+                    </>
+                  )}
                 </span>
                 <div
                   className={`message-bubble message-bubble-${message.role}`}
