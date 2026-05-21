@@ -1,0 +1,14 @@
+backend/.venv/
+frontend/node_modules/
+frontend/dist/
+__pycache__/
+.pytest_cache/
+.env
+.DS_Store
+.venv/
+*.pyc
+npm-debug.log*
+yarn-error.log*
+.vscode/
+dist/
+build/
