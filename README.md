@@ -33,6 +33,42 @@ npm run dev
 
 The frontend expects the backend at `http://localhost:8000` by default. You can override this with `VITE_API_URL`.
 
+## Run both locally (one command)
+
+To start both backend and frontend with a single command on Windows, run the PowerShell or batch script from the project root:
+
+PowerShell:
+
+```powershell
+.\run-dev.ps1
+```
+
+Batch (cmd):
+
+```cmd
+run-dev.bat
+```
+
+Each script opens two new terminal windows: one for the backend and one for the frontend. The scripts prefer the project's `.venv` Python when available.
+
+#### Single-terminal runner (combined logs)
+
+If you'd prefer combined logs in a single terminal, you can use the Python runner added at the project root. Activate the venv then run:
+
+```powershell
+.venv\Scripts\Activate.ps1
+python run-dev.py
+```
+
+Or on `cmd`:
+
+```cmd
+.venv\Scripts\activate.bat
+python run-dev.py
+```
+
+This starts the backend and frontend and prefixes each log line with `[BACKEND]` or `[FRONTEND]`.
+
 ## Optional AI configuration
 
 Set these environment variables in `backend/.env` or your shell:
