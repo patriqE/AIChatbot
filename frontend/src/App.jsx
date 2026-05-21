@@ -154,7 +154,7 @@ function App() {
       </main>
 
       <footer className="mobile-footer">
-        © 2024 Saffron Intelligence • Proprietary AI
+        © 2026 Saffron Intelligence • Proprietary AI
       </footer>
     </div>
   );
