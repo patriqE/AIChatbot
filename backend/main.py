@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 from typing import Literal
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from openai import OpenAI
+from dotenv import load_dotenv
 from pydantic import BaseModel, Field
+
+
+load_dotenv(Path(__file__).with_name(".env"))
 
 
 class ChatMessage(BaseModel):
@@ -65,6 +69,15 @@ def generate_reply(request: ChatRequest) -> tuple[str, str]:
     if not api_key:
         return fallback_reply(request.message), "fallback"
 
+    try:
+        from openai import OpenAI  # type: ignore[import-not-found]
+    except ImportError:
+        return (
+            "OpenAI support is not installed in this Python environment. "
+            "Activate the project virtual environment and install requirements.",
+            "missing-openai",
+        )
+
     model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
     client = OpenAI(api_key=api_key)
 
@@ -73,11 +86,21 @@ def generate_reply(request: ChatRequest) -> tuple[str, str]:
         messages.append({"role": item.role, "content": item.content})
     messages.append({"role": "user", "content": request.message})
 
-    completion = client.chat.completions.create(
-        model=model,
-        messages=messages,
-        temperature=0.7,
-    )
+    try:
+        completion = client.chat.completions.create(
+            model=model,
+            messages=messages,
+            temperature=0.7,
+        )
+    except Exception as exc:
+        error_text = str(exc).lower()
+        if "insufficient_quota" in error_text or "exceeded your current quota" in error_text or "429" in error_text:
+            return (
+                "Your OpenAI account has run out of quota. Check billing or add credits, then try again.",
+                "openai-quota-exceeded",
+            )
+
+        return fallback_reply(request.message), "openai-fallback"
 
     reply = completion.choices[0].message.content or "I’m not sure how to answer that."
     return reply.strip(), f"openai:{model}"
